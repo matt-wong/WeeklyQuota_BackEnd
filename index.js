@@ -1,18 +1,17 @@
 require('dotenv').config()
 const express = require('express')
 const app = express()
+var cors = require('cors')
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3()
 const bodyParser = require('body-parser');
 
 console.log(process.env.CYCLIC_BUCKET_NAME)
 
-app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Methods', 'PUT, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.status(204).end();
-});
-
+var corsOptions = {
+  origin: 'http://example.com',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 app.use(bodyParser.json())
 
@@ -42,8 +41,7 @@ app.get('*', async (req,res) => {
 
 
 // curl -i -XPUT --data '{"k1":"value 1", "k2": "value 2"}' -H 'Content-type: application/json' https://some-app.cyclic.app/myFile.txt
-app.put('*', async (req,res) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
+app.put('*', cors(corsOptions), async (req,res) => {
   let filename = req.path.slice(1)
 
   console.log(typeof req.body)
@@ -59,8 +57,7 @@ app.put('*', async (req,res) => {
 })
 
 // curl -i -XDELETE https://some-app.cyclic.app/myFile.txt
-app.delete('*', async (req,res) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
+app.delete('*', cors(corsOptions), async (req,res) => {
   let filename = req.path.slice(1)
 
   await s3.deleteObject({
@@ -74,8 +71,7 @@ app.delete('*', async (req,res) => {
 
 // /////////////////////////////////////////////////////////////////////////////
 // Catch all handler for all other request.
-app.use('*', (req,res) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
+app.use('*', cors(corsOptions), (req,res) => {
   res.sendStatus(404).end()
 })
 
