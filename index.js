@@ -36,6 +36,7 @@ app.get('*', async (req,res) => {
 
 // curl -i -XPUT --data '{"k1":"value 1", "k2": "value 2"}' -H 'Content-type: application/json' https://some-app.cyclic.app/myFile.txt
 app.put('*', async (req,res) => {
+  res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
   let filename = req.path.slice(1)
 
   console.log(typeof req.body)
@@ -52,6 +53,7 @@ app.put('*', async (req,res) => {
 
 // curl -i -XDELETE https://some-app.cyclic.app/myFile.txt
 app.delete('*', async (req,res) => {
+  res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
   let filename = req.path.slice(1)
 
   await s3.deleteObject({
@@ -66,6 +68,7 @@ app.delete('*', async (req,res) => {
 // /////////////////////////////////////////////////////////////////////////////
 // Catch all handler for all other request.
 app.use('*', (req,res) => {
+  res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
   res.sendStatus(404).end()
 })
 
