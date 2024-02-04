@@ -11,6 +11,7 @@ app.use(bodyParser.json())
 
 // curl -i https://some-app.cyclic.app/myFile.txt
 app.get('*', async (req,res) => {
+  res.set('Access-Control-Allow-Origin', 'http://localhost:4200');
   let filename = req.path.slice(1)
 
   try {
