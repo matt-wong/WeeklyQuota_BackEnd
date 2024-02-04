@@ -7,6 +7,13 @@ const bodyParser = require('body-parser');
 
 console.log(process.env.CYCLIC_BUCKET_NAME)
 
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Methods', 'PUT, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.status(204).end();
+});
+
+
 app.use(bodyParser.json())
 
 // curl -i https://some-app.cyclic.app/myFile.txt
